@@ -3,33 +3,28 @@ package Dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
-import java.time.format.ResolverStyle;
 import java.util.ArrayList;
-import model.Relatorio;
+import Model.Empresa;
 
-public class RelatorioDao {
+public class EmpresaDao {
 
     private Conexaobanco conexao;
 
-    private static final DateTimeFormatter FMT_TELA =
-            DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm").withResolverStyle(ResolverStyle.STRICT);
+    private static final String COLUNAS = "razao_social=?, cnpj=?";
 
-    private static final String COLUNAS = "id_administrador=?, conteudo=?";
-
-    public RelatorioDao() {
+    public EmpresaDao() {
         this.conexao = new Conexaobanco();
     }
 
-    public int inserir(Relatorio r) {
-        String sql = "INSERT INTO relatorio SET " + COLUNAS;
+    public int inserir(Empresa e) {
+        String sql = "INSERT INTO empresa SET " + COLUNAS;
 
         try {
             if (this.conexao.conectar()) {
                 PreparedStatement sentenca = this.conexao.getConnection()
                         .prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
 
-                preencher(sentenca, r);
+                preencher(sentenca, e);
                 sentenca.execute();
 
                 int novoId = 0;
@@ -46,17 +41,51 @@ public class RelatorioDao {
         return 0;
     }
 
-    public Relatorio buscarPorId(int idRelatorio) {
-        String sql = "SELECT * FROM relatorio WHERE id_relatorio=?";
-        Relatorio r = null;
+    public void alterar(Empresa e) {
+        String sql = "UPDATE empresa SET " + COLUNAS + " WHERE id_empresa=?";
 
         try {
             if (this.conexao.conectar()) {
                 PreparedStatement sentenca = this.conexao.getConnection().prepareStatement(sql);
-                sentenca.setInt(1, idRelatorio);
+
+                preencher(sentenca, e);
+                sentenca.setInt(3, e.getIdEmpresa());
+                sentenca.execute();
+                sentenca.close();
+                this.conexao.getConnection().close();
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public void excluir(int idEmpresa) {
+        String sql = "DELETE FROM empresa WHERE id_empresa=?";
+
+        try {
+            if (this.conexao.conectar()) {
+                PreparedStatement sentenca = this.conexao.getConnection().prepareStatement(sql);
+                sentenca.setInt(1, idEmpresa);
+                sentenca.execute();
+                sentenca.close();
+                this.conexao.getConnection().close();
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public Empresa buscarPorId(int idEmpresa) {
+        String sql = "SELECT * FROM empresa WHERE id_empresa=?";
+        Empresa e = null;
+
+        try {
+            if (this.conexao.conectar()) {
+                PreparedStatement sentenca = this.conexao.getConnection().prepareStatement(sql);
+                sentenca.setInt(1, idEmpresa);
                 ResultSet rs = sentenca.executeQuery();
 
-                if (rs.next()) r = mapear(rs);
+                if (rs.next()) e = mapear(rs);
 
                 rs.close();
                 sentenca.close();
@@ -65,12 +94,12 @@ public class RelatorioDao {
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
-        return r;
+        return e;
     }
 
-    public ArrayList<Relatorio> listar() {
-        ArrayList<Relatorio> lista = new ArrayList<>();
-        String sql = "SELECT * FROM relatorio ORDER BY data_relatorio DESC";
+    public ArrayList<Empresa> listar() {
+        ArrayList<Empresa> lista = new ArrayList<>();
+        String sql = "SELECT * FROM empresa ORDER BY razao_social";
 
         try {
             if (this.conexao.conectar()) {
@@ -91,7 +120,7 @@ public class RelatorioDao {
     }
 
     public int proximoId() {
-        String sql = "SELECT COALESCE(MAX(id_relatorio), 0) + 1 AS prox FROM relatorio";
+        String sql = "SELECT COALESCE(MAX(id_empresa), 0) + 1 AS prox FROM empresa";
 
         try {
             if (this.conexao.conectar()) {
@@ -112,17 +141,16 @@ public class RelatorioDao {
         return 1;
     }
 
-    private void preencher(PreparedStatement sentenca, Relatorio r) throws SQLException {
-        sentenca.setInt(1, r.getIdAdministrador());
-        sentenca.setString(2, r.getConteudo());
+    private void preencher(PreparedStatement sentenca, Empresa e) throws SQLException {
+        sentenca.setString(1, e.getRazaoSocial());
+        sentenca.setString(2, e.getCnpj());
     }
 
-    private Relatorio mapear(ResultSet rs) throws SQLException {
-        Relatorio r = new Relatorio();
-        r.setIdRelatorio(rs.getInt("id_relatorio"));
-        r.setIdAdministrador(rs.getInt("id_administrador"));
-        r.setConteudo(rs.getString("conteudo"));
-        r.setDataRelatorio(rs.getTimestamp("data_relatorio").toLocalDateTime().format(FMT_TELA));
-        return r;
+    private Empresa mapear(ResultSet rs) throws SQLException {
+        Empresa e = new Empresa();
+        e.setIdEmpresa(rs.getInt("id_empresa"));
+        e.setRazaoSocial(rs.getString("razao_social"));
+        e.setCnpj(rs.getString("cnpj"));
+        return e;
     }
 }

@@ -10,7 +10,7 @@ import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import model.Chamado;
+import Model.Chamado;
 
 public class ChamadoDao {
 

@@ -4,27 +4,27 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import model.Empresa;
+import Model.Setor;
 
-public class EmpresaDao {
+public class SetorDao {
 
     private Conexaobanco conexao;
 
-    private static final String COLUNAS = "razao_social=?, cnpj=?";
+    private static final String COLUNAS = "id_empresa=?, nome=?";
 
-    public EmpresaDao() {
+    public SetorDao() {
         this.conexao = new Conexaobanco();
     }
 
-    public int inserir(Empresa e) {
-        String sql = "INSERT INTO empresa SET " + COLUNAS;
+    public int inserir(Setor s) {
+        String sql = "INSERT INTO setor SET " + COLUNAS;
 
         try {
             if (this.conexao.conectar()) {
                 PreparedStatement sentenca = this.conexao.getConnection()
                         .prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
 
-                preencher(sentenca, e);
+                preencher(sentenca, s);
                 sentenca.execute();
 
                 int novoId = 0;
@@ -41,15 +41,15 @@ public class EmpresaDao {
         return 0;
     }
 
-    public void alterar(Empresa e) {
-        String sql = "UPDATE empresa SET " + COLUNAS + " WHERE id_empresa=?";
+    public void alterar(Setor s) {
+        String sql = "UPDATE setor SET " + COLUNAS + " WHERE id_setor=?";
 
         try {
             if (this.conexao.conectar()) {
                 PreparedStatement sentenca = this.conexao.getConnection().prepareStatement(sql);
 
-                preencher(sentenca, e);
-                sentenca.setInt(3, e.getIdEmpresa());
+                preencher(sentenca, s);
+                sentenca.setInt(3, s.getIdSetor());
                 sentenca.execute();
                 sentenca.close();
                 this.conexao.getConnection().close();
@@ -59,13 +59,13 @@ public class EmpresaDao {
         }
     }
 
-    public void excluir(int idEmpresa) {
-        String sql = "DELETE FROM empresa WHERE id_empresa=?";
+    public void excluir(int idSetor) {
+        String sql = "DELETE FROM setor WHERE id_setor=?";
 
         try {
             if (this.conexao.conectar()) {
                 PreparedStatement sentenca = this.conexao.getConnection().prepareStatement(sql);
-                sentenca.setInt(1, idEmpresa);
+                sentenca.setInt(1, idSetor);
                 sentenca.execute();
                 sentenca.close();
                 this.conexao.getConnection().close();
@@ -75,17 +75,17 @@ public class EmpresaDao {
         }
     }
 
-    public Empresa buscarPorId(int idEmpresa) {
-        String sql = "SELECT * FROM empresa WHERE id_empresa=?";
-        Empresa e = null;
+    public Setor buscarPorId(int idSetor) {
+        String sql = "SELECT * FROM setor WHERE id_setor=?";
+        Setor s = null;
 
         try {
             if (this.conexao.conectar()) {
                 PreparedStatement sentenca = this.conexao.getConnection().prepareStatement(sql);
-                sentenca.setInt(1, idEmpresa);
+                sentenca.setInt(1, idSetor);
                 ResultSet rs = sentenca.executeQuery();
 
-                if (rs.next()) e = mapear(rs);
+                if (rs.next()) s = mapear(rs);
 
                 rs.close();
                 sentenca.close();
@@ -94,12 +94,12 @@ public class EmpresaDao {
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
-        return e;
+        return s;
     }
 
-    public ArrayList<Empresa> listar() {
-        ArrayList<Empresa> lista = new ArrayList<>();
-        String sql = "SELECT * FROM empresa ORDER BY razao_social";
+    public ArrayList<Setor> listar() {
+        ArrayList<Setor> lista = new ArrayList<>();
+        String sql = "SELECT * FROM setor ORDER BY nome";
 
         try {
             if (this.conexao.conectar()) {
@@ -119,8 +119,31 @@ public class EmpresaDao {
         return lista;
     }
 
+    public ArrayList<Setor> listarPorEmpresa(int idEmpresa) {
+        ArrayList<Setor> lista = new ArrayList<>();
+        String sql = "SELECT * FROM setor WHERE id_empresa=? ORDER BY nome";
+
+        try {
+            if (this.conexao.conectar()) {
+                PreparedStatement sentenca = this.conexao.getConnection().prepareStatement(sql);
+                sentenca.setInt(1, idEmpresa);
+                ResultSet rs = sentenca.executeQuery();
+
+                while (rs.next()) {
+                    lista.add(mapear(rs));
+                }
+                rs.close();
+                sentenca.close();
+                this.conexao.getConnection().close();
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return lista;
+    }
+
     public int proximoId() {
-        String sql = "SELECT COALESCE(MAX(id_empresa), 0) + 1 AS prox FROM empresa";
+        String sql = "SELECT COALESCE(MAX(id_setor), 0) + 1 AS prox FROM setor";
 
         try {
             if (this.conexao.conectar()) {
@@ -141,16 +164,16 @@ public class EmpresaDao {
         return 1;
     }
 
-    private void preencher(PreparedStatement sentenca, Empresa e) throws SQLException {
-        sentenca.setString(1, e.getRazaoSocial());
-        sentenca.setString(2, e.getCnpj());
+    private void preencher(PreparedStatement sentenca, Setor s) throws SQLException {
+        sentenca.setInt(1, s.getIdEmpresa());
+        sentenca.setString(2, s.getNome());
     }
 
-    private Empresa mapear(ResultSet rs) throws SQLException {
-        Empresa e = new Empresa();
-        e.setIdEmpresa(rs.getInt("id_empresa"));
-        e.setRazaoSocial(rs.getString("razao_social"));
-        e.setCnpj(rs.getString("cnpj"));
-        return e;
+    private Setor mapear(ResultSet rs) throws SQLException {
+        Setor s = new Setor();
+        s.setIdSetor(rs.getInt("id_setor"));
+        s.setIdEmpresa(rs.getInt("id_empresa"));
+        s.setNome(rs.getString("nome"));
+        return s;
     }
 }

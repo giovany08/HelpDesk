@@ -15,15 +15,15 @@ import java.sql.SQLException;
 
 public class Conexaobanco {
 
-    private final String servidor;
-    private final String banco;
-    private final String usuario;
-    private final String senha;
+    private String servidor;
+    private String banco;
+    private String usuario;
+    private String senha;
     private Connection conexao;
 
     public Conexaobanco() {
-        this.servidor = "";
-        this.banco = "helpdesk";
+        this.servidor = "177.220.142.20";
+        this.banco = "grupo03_projetomensal";
         this.usuario = "grupo03";
         this.senha = "2V2cXpNJHNZ03a9d@";
     }
