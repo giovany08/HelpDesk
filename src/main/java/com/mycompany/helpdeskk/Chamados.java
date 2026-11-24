@@ -37,7 +37,7 @@ public class Chamados extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(51, 181, 178));
+        jPanel1.setBackground(new java.awt.Color(0, 0, 102));
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jButton1.setText("Dashboard");

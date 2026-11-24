@@ -50,7 +50,7 @@ public class Dashboard extends javax.swing.JFrame {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setFocusCycleRoot(false);
 
-        jPanel1.setBackground(new java.awt.Color(0, 153, 153));
+        jPanel1.setBackground(new java.awt.Color(0, 0, 102));
         jPanel1.setBorder(javax.swing.BorderFactory.createCompoundBorder());
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
