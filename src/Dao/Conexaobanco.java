@@ -46,6 +46,6 @@ public class Conexaobanco {
 
     public static void main(String[] args) {
         new Conexaobanco().conectar();
-        System.out.println("Conectou!");
+        System.out.println("Conectou agora!");
     }
 }
