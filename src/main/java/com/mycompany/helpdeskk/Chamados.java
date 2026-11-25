@@ -15,6 +15,7 @@ public class Chamados extends javax.swing.JFrame {
      */
     public Chamados() {
         initComponents();
+        
     }
 
     /**
@@ -43,6 +44,11 @@ public class Chamados extends javax.swing.JFrame {
         jButton1.setText("Dashboard");
         jButton1.setToolTipText("");
         jButton1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jButton1MousePressed(evt);
+            }
+        });
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -141,6 +147,10 @@ public class Chamados extends javax.swing.JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1MousePressed
 
     /**
      * @param args the command line arguments
