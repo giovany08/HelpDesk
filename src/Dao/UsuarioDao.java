@@ -10,7 +10,6 @@ public class UsuarioDao {
 
     private Conexaobanco conexao;
 
-    // a senha fica fora do COLUNAS: só é gravada no inserir e no alterarSenha
     private static final String COLUNAS = "id_setor=?, nome=?, login=?, sexo=?, cargo=?, perfil=?";
 
     public UsuarioDao() {
@@ -228,3 +227,4 @@ public class UsuarioDao {
         return u;
     }
 }
+
